@@ -14,35 +14,48 @@ TODO:
 - Enable configuration of the Alert registers
 - Documentation
 
-Example use:
+Example use (Using linux_embedded_hal in this case):
 ```rust
+extern crate linux_embedded_hal as hal;
+
 use mcp9600::*;
+use hal::I2cdev;
+use std::thread;
+use std::time::Duration;
 
-// Instantiate an i2c peripheral here. Depends on hardware ecosystem
+fn main() -> Result<(), hal::I2CError> {
+    let i2c_bus = I2cdev::new("/dev/i2c-1").unwrap();
+    let mut sensor = MCP9600::new(i2c_bus, DeviceAddr::AD7)?; Determined by I2C address
 
-let mut sensor = MCP9600::new(i2c, DeviceAddr::AD0)?; // If the Addr pin is tied to ground
-
-// Configure the thermocouple type, and filtercoefficient
-sensor.
-  set_sensor_configuration(
-    ThermocoupleType::TypeK,
-    FilterCoefficient::FilterMedium,
-    )?;
+    sensor.set_sensor_configuration(
+        ThermocoupleType::TypeK,
+        FilterCoefficient::FilterMedium,
+        )?;
 
 // Configure the measurement profile of the device
-sensor.
-  set_device_configuration(
-    ColdJunctionResolution::High,
-    ADCResolution::Bit18,
-    BurstModeSamples::Sample1,
-    ShutdownMode::NormalMode
-    )?;
+    sensor.set_device_configuration(
+            ColdJunctionResolution::High,
+            ADCResolution::Bit18,
+            BurstModeSamples::Sample1,
+            ShutdownMode::NormalMode
+            )?;
 
-// Perform a measurement
-loop {
-  let data = sensor.read_hot_junction();
-  println!("Temperature is: {:?}C", data.unwrap());
-  // Delay by some amount
-  // The max measurement frequency is primarily determined by the ADC resolution
-  // More details can be found in the datasheet for the MCP9600: (https://www.microchip.com/en-us/product/MCP9600)
+     loop {
+        let data = sensor.read_hot_junction();
+        println!("Temperature is: {:?}C", data.unwrap());
+        thread::sleep(Duration::from_secs(1));
+     }
 }
+```
+Determine the I2C address of the MCP9600 using an i2c scan utility. Find the corresponding DeviceAddr in the table below to use in initializing the sensor. 
+
+| DeviceAddr |   Hex   | Decimal |
+| :-------:  | :-----: | :-----: |
+|    AD0     |   x60   |    96   |
+|    AD1     |   x61   |    97   |
+|    AD2     |   x62   |    98   |
+|    AD3     |   x63   |    99   |
+|    AD4     |   x64   |   100   |
+|    AD5     |   x65   |   101   |
+|    AD6     |   x66   |   102   |
+|    AD7     |   x67   |   103   |
