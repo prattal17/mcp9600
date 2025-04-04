@@ -4,22 +4,31 @@
 mod types;
 
 //use bitvec::prelude::*;
-use embedded_hal::blocking::i2c;
+use embedded_hal::i2c::I2c;
 
 pub use types::*;
+
+/// All possible errors in this crate
+#[derive(Debug)]
+pub enum Error<E> {
+    /// I²C bus error
+    I2C(E),
+    /// Invalid input data.
+    InvalidInputData,
+}
 
 #[derive(Debug)]
 pub struct MCP9600<I2C> {
     // The concrete I2C device implementation
     i2c: I2C,
-
+    
     // Device address
     address: DeviceAddr,
 }
 
 impl<I2C, E> MCP9600<I2C>
 where
-    I2C: i2c::WriteRead<Error = E> + i2c::Write<Error = E>,
+    I2C: I2c<Error = E>,
 {
     /// Creates a new instance of the sensor, taking ownership of the i2c peripheral
     pub fn new(i2c: I2C, address: DeviceAddr) -> Result<Self, E> {
