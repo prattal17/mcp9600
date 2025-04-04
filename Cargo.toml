@@ -1,7 +1,7 @@
 [package]
 name = "mcp9600"
-version = "0.1.1"
-edition = "2021"
+version = "0.2.0"
+edition = "2025"
 description = "Basic embedded-hal-based I2C driver for the MCP9600 and MCP9601 thermocouple amplifier ICs"
 repository = "https://github.com/besselfunct/mcp9600"
 license = "MIT"
@@ -11,5 +11,5 @@ categories = ["embedded"]
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-embedded-hal = "0.2.7"
+embedded-hal = "1.0.0"
 bitvec = "~1.0"
