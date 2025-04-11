@@ -25,7 +25,7 @@ use std::time::Duration;
 
 fn main() -> Result<(), hal::I2CError> {
     let i2c_bus = I2cdev::new("/dev/i2c-1").unwrap();
-    let mut sensor = MCP9600::new(i2c_bus, DeviceAddr::AD7)?; Determined by I2C address
+    let mut sensor = MCP9600::new(i2c_bus, DeviceAddr::AD7)?; // Determined by I2C address
 
     sensor.set_sensor_configuration(
         ThermocoupleType::TypeK,
